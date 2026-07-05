@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | Enterprise Expense Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link href="../css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="brand"><i class="fas fa-building me-2"></i>Enterprise EXP</span>
+      <span class="brand-sub">v2.0 Enterprise Edition</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="admin-dashboard.html" class="nav-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="admin-users.html" class="nav-item"><i class="fas fa-users"></i> Manage Users</a>
+      <a href="admin-claims.html" class="nav-item"><i class="fas fa-file-invoice"></i> All Claims</a>
+      <a href="admin-departments.html" class="nav-item"><i class="fas fa-sitemap"></i> Departments</a>
+      <a href="audit-logs.html" class="nav-item"><i class="fas fa-history"></i> Audit Logs</a>
+      <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications <span id="notif-badge" class="badge bg-danger ms-auto d-none">0</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar"><i class="fas fa-user-shield"></i></div>
+        <div>
+          <div class="user-name" id="sidebar-username">-</div>
+          <div class="user-role" id="sidebar-role">-</div>
+          <div class="user-dept" id="sidebar-dept">-</div>
+        </div>
+      </div>
+      <button class="btn btn-outline-light btn-sm w-100" id="logout-btn"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+    </div>
+  </aside>
+  <main class="main-content">
+    <div class="topbar">
+      <h5 class="mb-0 fw-bold">Admin Dashboard</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-success btn-sm" onclick="api.downloadAllExcel()"><i class="fas fa-file-excel me-1"></i>Export Excel</button>
+        <a href="/swagger-ui.html" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-code me-1"></i>API Docs</a>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="stat-card"><div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-users"></i></div><div><div class="stat-value" id="total-users">-</div><div class="stat-label">Total Users</div></div></div></div>
+        <div class="col-md-3"><div class="stat-card"><div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-clock"></i></div><div><div class="stat-value" id="pending-claims">-</div><div class="stat-label">Pending Claims</div></div></div></div>
+        <div class="col-md-3"><div class="stat-card"><div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-exclamation-triangle"></i></div><div><div class="stat-value" id="escalated">-</div><div class="stat-label">Escalated</div></div></div></div>
+        <div class="col-md-3"><div class="stat-card"><div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fas fa-rupee-sign"></i></div><div><div class="stat-value" id="total-paid">-</div><div class="stat-label">Total Paid</div></div></div></div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card h-100"><div class="card-header"><h6>Expense by Category</h6></div><div class="card-body"><canvas id="categoryChart"></canvas></div></div></div>
+        <div class="col-md-4"><div class="card h-100"><div class="card-header"><h6>Claims by Status</h6></div><div class="card-body"><canvas id="statusChart"></canvas></div></div></div>
+        <div class="col-md-4"><div class="card h-100"><div class="card-header"><h6>Monthly Expenses</h6></div><div class="card-body"><canvas id="monthlyChart"></canvas></div></div></div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header"><h6>Recent Audit Logs</h6><a href="audit-logs.html" class="btn btn-sm btn-outline-secondary">View All</a></div>
+            <div class="card-body p-0">
+              <table class="table table-sm mb-0">
+                <thead class="table-light"><tr><th>User</th><th>Action</th><th>Details</th><th>Time</th></tr></thead>
+                <tbody id="audit-body"><tr><td colspan="4" class="text-center py-2 text-muted">Loading...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header"><h6>Quick Actions</h6></div>
+            <div class="card-body d-grid gap-2">
+              <a href="admin-users.html" class="btn btn-outline-primary btn-sm"><i class="fas fa-users me-2"></i>Manage Users</a>
+              <a href="admin-claims.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-file-invoice me-2"></i>All Claims</a>
+              <a href="admin-departments.html" class="btn btn-outline-info btn-sm"><i class="fas fa-sitemap me-2"></i>Departments</a>
+              <a href="audit-logs.html" class="btn btn-outline-dark btn-sm"><i class="fas fa-history me-2"></i>Audit Logs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const stats = await api.getDashboard();
+    document.getElementById('total-users').textContent = stats.totalUsers;
+    document.getElementById('pending-claims').textContent = stats.pendingClaims;
+    document.getElementById('escalated').textContent = stats.escalated;
+    document.getElementById('total-paid').textContent = formatCurrency(stats.totalPaid);
+  } catch(e) {}
+
+  try {
+    const cat = await api.getCategoryChart();
+    new Chart(document.getElementById('categoryChart'), { type:'doughnut', data:{ labels:cat.labels, datasets:[{data:cat.values, backgroundColor:['#4f46e5','#7c3aed','#db2777','#dc2626','#d97706','#059669','#0891b2','#4338ca','#be185d','#b45309','#065f46','#1e40af']}]}, options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}}}});
+  } catch(e) { document.getElementById('categoryChart').parentElement.innerHTML = '<p class="text-muted text-center">No data yet</p>'; }
+
+  try {
+    const st = await api.getStatusChart();
+    new Chart(document.getElementById('statusChart'), { type:'bar', data:{ labels:st.labels.map(l=>l.replace(/_/g,' ')), datasets:[{label:'Claims',data:st.values,backgroundColor:'#4f46e5'}]}, options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+  } catch(e) {}
+
+  try {
+    const mo = await api.getMonthlyChart();
+    new Chart(document.getElementById('monthlyChart'), { type:'line', data:{ labels:mo.labels, datasets:[{label:'Amount (₹)',data:mo.values,borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,0.1)',fill:true,tension:0.4}]}, options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+  } catch(e) {}
+
+  try {
+    const logs = await api.getAuditLogs(10);
+    const tbody = document.getElementById('audit-body');
+    if (!logs || !logs.length) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No logs yet</td></tr>'; return; }
+    tbody.innerHTML = logs.map(l => `<tr><td><small>${l.performedBy}</small></td><td><span class="badge bg-primary" style="font-size:10px">${l.action}</span></td><td><small class="text-muted">${l.details||'-'}</small></td><td><small class="text-muted">${formatDate(l.createdAt)}</small></td></tr>`).join('');
+  } catch(e) { document.getElementById('audit-body').innerHTML = '<tr><td colspan="4" class="text-center text-muted">No logs yet</td></tr>'; }
+});
+</script>
+</body>
+</html>

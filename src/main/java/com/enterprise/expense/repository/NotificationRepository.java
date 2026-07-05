@@ -1,0 +1,12 @@
+package com.enterprise.expense.repository;
+import com.enterprise.expense.entity.Notification;
+import com.enterprise.expense.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
+    List<Notification> findByUserOrderByCreatedAtDesc(User user);
+    @Query("SELECT COUNT(n) FROM Notification n WHERE n.user=:user AND n.read=false")
+    long countUnread(@Param("user") User user);
+}

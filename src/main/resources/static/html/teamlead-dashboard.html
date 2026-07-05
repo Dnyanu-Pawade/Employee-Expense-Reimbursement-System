@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Team Lead Dashboard | Enterprise Expense</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="../css/style.css" rel="stylesheet"/></head>
+<body><div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-header"><span class="brand"><i class="fas fa-building me-2"></i>Enterprise EXP</span><span class="brand-sub">Team Lead Portal</span></div>
+  <nav class="sidebar-nav">
+    <a href="teamlead-dashboard.html" class="nav-item active"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications <span id="notif-badge" class="badge bg-danger ms-auto d-none">0</span></a>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info"><div class="user-avatar"><i class="fas fa-user-check"></i></div><div><div class="user-name" id="sidebar-username">-</div><div class="user-role" id="sidebar-role">-</div></div></div>
+    <button class="btn btn-outline-light btn-sm w-100" id="logout-btn"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+  </div>
+</aside>
+<main class="main-content">
+  <div class="topbar"><h5 class="mb-0 fw-bold">Team Lead Dashboard — First Level Approvals</h5></div>
+  <div class="content-body">
+    <div class="card">
+      <div class="card-header"><h6>Claims Submitted by Employees</h6></div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead class="table-light"><tr><th>Claim #</th><th>Employee</th><th>Title</th><th>Category</th><th>Amount</th><th>Urgent</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="claims-body"><tr><td colspan="8" class="text-center py-3">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<div class="modal fade" id="reviewModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="modal-title">Review Claim</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><textarea id="review-comment" class="form-control" rows="3" placeholder="Add comment..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-success" id="confirm-approve-btn"><i class="fas fa-check me-1"></i>Approve</button>
+      <button class="btn btn-danger" id="confirm-reject-btn"><i class="fas fa-times me-1"></i>Reject</button>
+      <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+  </div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script><script src="../js/app.js"></script>
+<script>
+let selectedId = null, selectedAction = null;
+const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+async function loadClaims() {
+  const claims = await api.getTeamLeadPending();
+  const tbody = document.getElementById('claims-body');
+  if (!claims.length) { tbody.innerHTML='<tr><td colspan="8" class="text-center py-4 text-muted"><i class="fas fa-check-circle fa-2x mb-2 text-success d-block"></i>No pending claims</td></tr>'; return; }
+  tbody.innerHTML = claims.map(c=>`<tr>
+    <td><small class="text-muted">${c.claimNumber}</small></td>
+    <td><strong>${c.employee?.fullName||'-'}</strong></td>
+    <td>${c.title}</td>
+    <td><span class="badge bg-secondary">${c.category}</span></td>
+    <td class="fw-semibold text-primary">₹${parseFloat(c.amount).toFixed(2)}</td>
+    <td>${c.urgent?'<span class="badge bg-danger">URGENT</span>':'-'}</td>
+    <td>${formatDate(c.expenseDate)}</td>
+    <td>
+      <button class="btn btn-success btn-sm me-1" onclick="openReview(${c.id},'approve','${c.title}')"><i class="fas fa-check"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="openReview(${c.id},'reject','${c.title}')"><i class="fas fa-times"></i></button>
+    </td>
+  </tr>`).join('');
+}
+function openReview(id, action, title) {
+  selectedId=id; selectedAction=action;
+  document.getElementById('modal-title').textContent=(action==='approve'?'Approve':'Reject')+': '+title;
+  document.getElementById('review-comment').value='';
+  document.getElementById('confirm-approve-btn').style.display=action==='approve'?'':'none';
+  document.getElementById('confirm-reject-btn').style.display=action==='reject'?'':'none';
+  modal.show();
+}
+document.getElementById('confirm-approve-btn').addEventListener('click', async()=>{ try{await api.teamLeadApprove(selectedId,document.getElementById('review-comment').value);modal.hide();showToast('Approved!');loadClaims();}catch(e){showToast(e.message,'error');}});
+document.getElementById('confirm-reject-btn').addEventListener('click', async()=>{ try{await api.teamLeadReject(selectedId,document.getElementById('review-comment').value);modal.hide();showToast('Rejected');loadClaims();}catch(e){showToast(e.message,'error');}});
+document.addEventListener('DOMContentLoaded', loadClaims);
+</script></body></html>
