@@ -1,8 +1,16 @@
 package com.enterprise.expense.controller;
 import com.enterprise.expense.entity.ExpenseClaim;
 import com.enterprise.expense.service.*;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -32,9 +40,9 @@ public class ExportController {
         Document doc = new Document();
         PdfWriter.getInstance(doc, out);
         doc.open();
-        Font title = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY);
-        Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, BaseColor.WHITE);
-        Font normal = FontFactory.getFont(FontFactory.HELVETICA, 11);
+        com.itextpdf.text.Font title = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DARK_GRAY);
+        com.itextpdf.text.Font bold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, BaseColor.WHITE);
+        com.itextpdf.text.Font normal = FontFactory.getFont(FontFactory.HELVETICA, 11);
         Paragraph t = new Paragraph("Enterprise Expense Reimbursement", title);
         t.setAlignment(Element.ALIGN_CENTER); t.setSpacingAfter(20); doc.add(t);
         PdfPTable table = new PdfPTable(2); table.setWidthPercentage(100);
@@ -64,7 +72,7 @@ public class ExportController {
     private ResponseEntity<byte[]> excelResponse(List<ExpenseClaim> claims, String filename) throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Claims");
-            CellStyle hs = wb.createCellStyle(); Font hf = wb.createFont(); hf.setBold(true); hs.setFont(hf);
+            CellStyle hs = wb.createCellStyle(); org.apache.poi.ss.usermodel.Font hf = wb.createFont(); hf.setBold(true); hs.setFont(hf);
             hs.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex()); hs.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             Row header = sheet.createRow(0);
             String[] cols = {"Claim#","Employee","Department","Title","Category","Amount","Date","Status","Vendor"};

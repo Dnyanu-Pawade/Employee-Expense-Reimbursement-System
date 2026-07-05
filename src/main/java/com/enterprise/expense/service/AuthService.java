@@ -56,7 +56,7 @@ public class AuthService {
         u.setResetToken(token); u.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
         userRepository.save(u);
         emailService.sendPasswordReset(email, token);
-        return "Password reset email sent";
+        return "RESET_TOKEN:" + token;
     }
 
     public String resetPassword(String token, String newPassword) {

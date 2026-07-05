@@ -39,8 +39,8 @@ const api = {
   delete(path) { return this.request('DELETE', path); },
   login(u, p) { return fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})}).then(r=>r.json()); },
   // Auth
-  forgotPassword(email) { return this.post('/api/auth/forgot-password',{email}); },
-  resetPassword(token,newPassword) { return this.post('/api/auth/reset-password',{token,newPassword}); },
+  forgotPassword(email) { return fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).then(r=>r.json()); },
+  resetPassword(token,newPassword) { return fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,newPassword})}).then(r=>r.json()); },
   // Expenses
   submitExpense(data) { return this.post('/api/expenses',data); },
   getMyExpenses() { return this.get('/api/expenses'); },
