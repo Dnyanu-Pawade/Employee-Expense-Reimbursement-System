@@ -40,12 +40,13 @@ public class ExpenseClaim {
     private boolean urgent = false;
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"claim"})
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<ClaimDocument> documents;
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"claim"})
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<ApprovalHistory> approvalHistory;
     @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"claim"})
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Comment> comments;
     @Column(updatable = false)
     private LocalDateTime createdAt;

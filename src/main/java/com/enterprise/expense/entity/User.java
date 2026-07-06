@@ -2,6 +2,7 @@ package com.enterprise.expense.entity;
 
 import com.enterprise.expense.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -24,11 +25,13 @@ public class User {
     private String designation;
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private Role role;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     private Department department;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler","password","resetToken","manager","department"})
     private User manager;
     private boolean active = true;
     private String profilePhoto;
