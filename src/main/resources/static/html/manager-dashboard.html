@@ -47,22 +47,24 @@
 let selectedId = null, selectedAction = null;
 const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
 async function loadClaims() {
-  const claims = await api.getManagerPending();
   const tbody = document.getElementById('claims-body');
-  if (!claims.length) { tbody.innerHTML='<tr><td colspan="8" class="text-center py-4 text-muted"><i class="fas fa-check-circle fa-2x mb-2 text-success d-block"></i>No pending claims</td></tr>'; return; }
-  tbody.innerHTML = claims.map(c=>`<tr>
-    <td><small class="text-muted">${c.claimNumber}</small></td>
-    <td><strong>${c.employee?.fullName||'-'}</strong></td>
-    <td><small>${c.employee?.department?.name||'-'}</small></td>
-    <td>${c.title}</td>
-    <td class="fw-semibold text-primary">₹${parseFloat(c.amount).toFixed(2)}</td>
-    <td>${c.urgent?'<span class="badge bg-danger">URGENT</span>':'-'}</td>
-    <td>${formatDate(c.expenseDate)}</td>
-    <td>
-      <button class="btn btn-success btn-sm me-1" onclick="openReview(${c.id},'approve','${c.title}')"><i class="fas fa-check"></i> Approve</button>
-      <button class="btn btn-danger btn-sm" onclick="openReview(${c.id},'reject','${c.title}')"><i class="fas fa-times"></i> Reject</button>
-    </td>
-  </tr>`).join('');
+  try {
+    const claims = await api.getManagerPending();
+    if (!claims.length) { tbody.innerHTML='<tr><td colspan="8" class="text-center py-4 text-muted"><i class="fas fa-check-circle fa-2x mb-2 text-success d-block"></i>No pending claims</td></tr>'; return; }
+    tbody.innerHTML = claims.map(c=>`<tr>
+      <td><small class="text-muted">${c.claimNumber}</small></td>
+      <td><strong>${c.employeeName||'-'}</strong></td>
+      <td><small>${c.employeeId||'-'}</small></td>
+      <td>${c.title}</td>
+      <td class="fw-semibold text-primary">₹${parseFloat(c.amount).toFixed(2)}</td>
+      <td>${c.urgent?'<span class="badge bg-danger">URGENT</span>':'-'}</td>
+      <td>${formatDate(c.expenseDate)}</td>
+      <td>
+        <button class="btn btn-success btn-sm me-1" onclick="openReview(${c.id},'approve','${c.title}')"><i class="fas fa-check"></i> Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="openReview(${c.id},'reject','${c.title}')"><i class="fas fa-times"></i> Reject</button>
+      </td>
+    </tr>`).join('');
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="8" class="text-center py-3 text-danger">${e.message||'Failed to load'}</td></tr>`; }
 }
 function openReview(id, action, title) {
   selectedId=id; selectedAction=action;

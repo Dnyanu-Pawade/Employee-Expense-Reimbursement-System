@@ -46,6 +46,13 @@ public class UserService {
             return "/uploads/profiles/" + filename;
         } catch (IOException e) { throw new RuntimeException("Failed to upload photo"); }
     }
+    public String changePassword(String currentPassword, String newPassword) {
+        User u = currentUser();
+        if (!passwordEncoder.matches(currentPassword, u.getPassword())) throw new RuntimeException("Current password is incorrect");
+        u.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(u);
+        return "Password changed successfully";
+    }
     public User assignManager(Long userId, Long managerId) {
         User u = getById(userId); User m = getById(managerId);
         u.setManager(m); return userRepository.save(u);

@@ -85,6 +85,7 @@ const api = {
   // Profile
   getProfile() { return this.get('/api/users/me'); },
   updateProfile(data) { return this.put('/api/users/me',data); },
+  changePassword(currentPassword,newPassword) { return this.post('/api/users/me/change-password',{currentPassword,newPassword}); },
   // Export
   async downloadFile(path, filename) {
     const res = await fetch(BASE_URL+path,{headers:{'Authorization':`Bearer ${this.getToken()}`}});

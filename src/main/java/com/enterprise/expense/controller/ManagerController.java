@@ -1,15 +1,16 @@
 package com.enterprise.expense.controller;
+import com.enterprise.expense.dto.ClaimSummaryDTO;
 import com.enterprise.expense.dto.ReviewRequest;
-import com.enterprise.expense.entity.ExpenseClaim;
 import com.enterprise.expense.service.ExpenseClaimService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 @RestController @RequestMapping("/api/manager") @RequiredArgsConstructor
 public class ManagerController {
     private final ExpenseClaimService service;
-    @GetMapping("/pending") public ResponseEntity<List<ExpenseClaim>> getPending() { return ResponseEntity.ok(service.getPendingForManager()); }
-    @PutMapping("/approve/{id}") public ResponseEntity<ExpenseClaim> approve(@PathVariable Long id, @RequestBody ReviewRequest req) { return ResponseEntity.ok(service.managerApprove(id, req)); }
-    @PutMapping("/reject/{id}") public ResponseEntity<ExpenseClaim> reject(@PathVariable Long id, @RequestBody ReviewRequest req) { return ResponseEntity.ok(service.managerReject(id, req)); }
+    @GetMapping("/pending") public ResponseEntity<List<ClaimSummaryDTO>> getPending() { return ResponseEntity.ok(service.getPendingForManager().stream().map(ClaimSummaryDTO::from).collect(Collectors.toList())); }
+    @PutMapping("/approve/{id}") public ResponseEntity<ClaimSummaryDTO> approve(@PathVariable Long id, @RequestBody ReviewRequest req) { return ResponseEntity.ok(ClaimSummaryDTO.from(service.managerApprove(id, req))); }
+    @PutMapping("/reject/{id}") public ResponseEntity<ClaimSummaryDTO> reject(@PathVariable Long id, @RequestBody ReviewRequest req) { return ResponseEntity.ok(ClaimSummaryDTO.from(service.managerReject(id, req))); }
 }

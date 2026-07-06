@@ -35,6 +35,14 @@
         </div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Changes</button>
       </form>
+      <hr/>
+      <h6 class="fw-bold mt-3">Change Password</h6>
+      <form id="password-form">
+        <div class="mb-3"><label class="form-label fw-semibold">Current Password</label><input type="password" id="currentPassword" class="form-control" required/></div>
+        <div class="mb-3"><label class="form-label fw-semibold">New Password</label><input type="password" id="newPassword" class="form-control" minlength="6" required/></div>
+        <div class="mb-3"><label class="form-label fw-semibold">Confirm New Password</label><input type="password" id="confirmPassword" class="form-control" required/></div>
+        <button type="submit" class="btn btn-warning"><i class="fas fa-key me-1"></i>Change Password</button>
+      </form>
     </div></div>
   </div></div></div>
 </main>
@@ -66,6 +74,18 @@ document.getElementById('profile-form').addEventListener('submit', async(e)=>{
     await api.updateProfile({fullName:document.getElementById('fullName').value,phone:document.getElementById('phone').value,designation:document.getElementById('designation').value});
     document.getElementById('success').textContent='Profile updated!'; document.getElementById('success').classList.remove('d-none');
     document.getElementById('error').classList.add('d-none');
+  } catch(err) { document.getElementById('error').textContent=err.message; document.getElementById('error').classList.remove('d-none'); }
+});
+document.getElementById('password-form').addEventListener('submit', async(e)=>{
+  e.preventDefault();
+  const np = document.getElementById('newPassword').value;
+  const cp = document.getElementById('confirmPassword').value;
+  if (np !== cp) { document.getElementById('error').textContent='Passwords do not match'; document.getElementById('error').classList.remove('d-none'); return; }
+  try {
+    await api.changePassword(document.getElementById('currentPassword').value, np);
+    document.getElementById('success').textContent='Password changed successfully!'; document.getElementById('success').classList.remove('d-none');
+    document.getElementById('error').classList.add('d-none');
+    document.getElementById('password-form').reset();
   } catch(err) { document.getElementById('error').textContent=err.message; document.getElementById('error').classList.remove('d-none'); }
 });
 </script></body></html>

@@ -70,16 +70,20 @@
 let selectedId=null, currentMode='verify';
 const modal = new bootstrap.Modal(document.getElementById('actionModal'));
 async function loadVerify() {
-  const claims = await api.getFinancePending();
   const tbody = document.getElementById('verify-body');
-  if (!claims.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">No claims pending</td></tr>'; return; }
-  tbody.innerHTML = claims.map(c=>`<tr><td><small>${c.claimNumber}</small></td><td>${c.employee?.fullName||'-'}</td><td class="fw-semibold text-success">₹${parseFloat(c.amount).toFixed(2)}</td><td><button class="btn btn-primary btn-sm me-1" onclick="openAction(${c.id},'verify')"><i class="fas fa-check"></i></button><button class="btn btn-danger btn-sm" onclick="openAction(${c.id},'verify-reject')"><i class="fas fa-times"></i></button></td></tr>`).join('');
+  try {
+    const claims = await api.getFinancePending();
+    if (!claims.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">No claims pending</td></tr>'; return; }
+    tbody.innerHTML = claims.map(c=>`<tr><td><small>${c.claimNumber}</small></td><td>${c.employeeName||'-'}</td><td class="fw-semibold text-success">₹${parseFloat(c.amount).toFixed(2)}</td><td><button class="btn btn-primary btn-sm me-1" onclick="openAction(${c.id},'verify')"><i class="fas fa-check"></i></button><button class="btn btn-danger btn-sm" onclick="openAction(${c.id},'verify-reject')"><i class="fas fa-times"></i></button></td></tr>`).join('');
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="4" class="text-center py-3 text-danger">${e.message||'Failed to load'}</td></tr>`; }
 }
 async function loadPayment() {
-  const claims = await api.getFinanceVerified();
   const tbody = document.getElementById('payment-body');
-  if (!claims.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">No claims pending</td></tr>'; return; }
-  tbody.innerHTML = claims.map(c=>`<tr><td><small>${c.claimNumber}</small></td><td>${c.employee?.fullName||'-'}</td><td class="fw-semibold text-success">₹${parseFloat(c.amount).toFixed(2)}</td><td><button class="btn btn-success btn-sm" onclick="openAction(${c.id},'payment')"><i class="fas fa-money-bill me-1"></i>Pay</button></td></tr>`).join('');
+  try {
+    const claims = await api.getFinanceVerified();
+    if (!claims.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center py-3 text-muted">No claims pending</td></tr>'; return; }
+    tbody.innerHTML = claims.map(c=>`<tr><td><small>${c.claimNumber}</small></td><td>${c.employeeName||'-'}</td><td class="fw-semibold text-success">₹${parseFloat(c.amount).toFixed(2)}</td><td><button class="btn btn-success btn-sm" onclick="openAction(${c.id},'payment')"><i class="fas fa-money-bill me-1"></i>Pay</button></td></tr>`).join('');
+  } catch(e) { tbody.innerHTML=`<tr><td colspan="4" class="text-center py-3 text-danger">${e.message||'Failed to load'}</td></tr>`; }
 }
 function openAction(id, mode) {
   selectedId=id; currentMode=mode;
