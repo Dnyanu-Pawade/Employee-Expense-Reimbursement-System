@@ -12,7 +12,7 @@ public class Notification {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer","handler","password","resetToken"})
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
     @Column(nullable = false)
     private String title;
@@ -21,7 +21,7 @@ public class Notification {
     private String type;
     private String link;
     @Column(name = "is_read") @Builder.Default
-    private boolean read = false;
+    private boolean isRead = false;
     @Column(updatable = false)
     private LocalDateTime createdAt;
     @PrePersist protected void onCreate() { createdAt = LocalDateTime.now(); }

@@ -24,10 +24,12 @@
 <script src="../js/api.js"></script><script src="../js/app.js"></script>
 <script>
 async function load() {
-  const list = await api.getNotifications();
   const container = document.getElementById('notif-list');
-  if (!list || !list.length) { container.innerHTML='<div class="text-center py-4 text-muted"><i class="fas fa-bell-slash fa-2x mb-2 d-block"></i>No notifications</div>'; return; }
-  container.innerHTML = list.map(n=>`<div class="d-flex align-items-start p-3 border-bottom ${n.read?'':'bg-light'}"><div class="me-3 mt-1"><i class="fas fa-bell text-primary"></i></div><div class="flex-grow-1"><div class="fw-semibold" style="font-size:14px">${n.title}</div><div class="text-muted" style="font-size:13px">${n.message}</div><div class="text-muted" style="font-size:11px">${formatDateTime(n.createdAt)}</div></div>${!n.read?'<span class="badge bg-primary">New</span>':''}</div>`).join('');
+  try {
+    const list = await api.getNotifications();
+    if (!list || !list.length) { container.innerHTML='<div class="text-center py-4 text-muted"><i class="fas fa-bell-slash fa-2x mb-2 d-block"></i>No notifications</div>'; return; }
+    container.innerHTML = list.map(n=>`<div class="d-flex align-items-start p-3 border-bottom ${!n.isRead?'bg-light':''}"><div class="me-3 mt-1"><i class="fas fa-bell text-primary"></i></div><div class="flex-grow-1"><div class="fw-semibold" style="font-size:14px">${n.title}</div><div class="text-muted" style="font-size:13px">${n.message}</div><div class="text-muted" style="font-size:11px">${formatDateTime(n.createdAt)}</div></div>${!n.isRead?'<span class="badge bg-primary">New</span>':''}</div>`).join('');
+  } catch(e) { container.innerHTML=`<div class="text-center py-4 text-danger"><i class="fas fa-exclamation-circle fa-2x mb-2 d-block"></i>${e.message||'Failed to load notifications'}</div>`; }
 }
 document.getElementById('mark-read-btn').addEventListener('click', async()=>{ await api.markNotificationsRead(); load(); });
 document.addEventListener('DOMContentLoaded', load);

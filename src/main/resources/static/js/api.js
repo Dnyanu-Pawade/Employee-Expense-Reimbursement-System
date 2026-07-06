@@ -76,7 +76,7 @@ const api = {
   getStatusChart() { return this.get('/api/admin/charts/status',true); },
   getMonthlyChart() { return this.get('/api/admin/charts/monthly',true); },
   // Notifications
-  getNotifications() { return this.get('/api/notifications',true); },
+  getNotifications() { return this.get('/api/notifications'); },
   getUnreadCount() { return this.get('/api/notifications/unread-count',true); },
   markNotificationsRead() { return this.patch('/api/notifications/mark-read'); },
   // Comments
