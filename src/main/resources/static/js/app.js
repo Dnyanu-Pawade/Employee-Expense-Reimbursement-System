@@ -7,6 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (unEl && currentUser) unEl.textContent = currentUser.fullName || currentUser.username;
   if (roleEl && currentUser) roleEl.textContent = (currentUser.role||'').replace('ROLE_','');
   if (deptEl && currentUser) deptEl.textContent = currentUser.department || '';
+  // Load profile photo in sidebar
+  api.getProfile().then(p => {
+    const avatarEl = document.querySelector('.user-avatar');
+    if (avatarEl && p && p.profilePhoto) {
+      avatarEl.innerHTML = `<img src="${p.profilePhoto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/>`;
+    }
+  }).catch(()=>{});
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) logoutBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = '/index.html'; });
   api.getUnreadCount().then(d => {

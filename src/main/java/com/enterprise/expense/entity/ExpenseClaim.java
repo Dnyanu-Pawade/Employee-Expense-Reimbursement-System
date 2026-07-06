@@ -17,9 +17,9 @@ public class ExpenseClaim {
     private Long id;
     @Column(nullable = false, unique = true)
     private String claimNumber;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer","handler","password","resetToken","manager"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler","password","resetToken","manager","resetTokenExpiry"})
     private User employee;
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private ExpenseCategory category;
