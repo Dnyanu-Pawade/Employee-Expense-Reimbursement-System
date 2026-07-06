@@ -1,7 +1,36 @@
 # 💼 Employee Expense Reimbursement System
 ### Enterprise Expense Management Platform v2.0
 
+[![Java](https://img.shields.io/badge/Java-17-orange)](https://www.java.com)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)](https://www.mysql.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](#)
+
 A full-stack **Spring Boot + MySQL + HTML/CSS/JS** enterprise-grade expense reimbursement system with **multi-level approval workflow**, **6 roles**, **SLA tracking**, **JWT authentication**, **PDF/Excel export**, and **real-time notifications**.
+
+---
+
+## 🌐 Live Demo
+> Start the app and open: **http://localhost:8082**
+
+### 🔑 Quick Login
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | `Dnyaneshwar` | `Dnyaneshwar@123` |
+| Manager | `manager1` | `Manager@123` |
+| Team Lead | `teamlead1` | `TeamLead@123` |
+| Finance | `finance1` | `Finance@123` |
+| Employee | `employee1` | `Employee@123` |
+
+---
+
+## 📸 Screenshots
+
+> Login Page → Dashboard → Submit Expense → Approval Workflow → Analytics
+
+| Login | Employee Dashboard | Admin Dashboard |
+|-------|-------------------|----------------|
+| ![Login](docs/screenshots/login.png) | ![Employee](docs/screenshots/employee.png) | ![Admin](docs/screenshots/admin.png) |
 
 ---
 

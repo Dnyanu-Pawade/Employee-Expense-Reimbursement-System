@@ -20,6 +20,11 @@
     <div class="card"><div class="card-body p-4">
       <div id="success" class="alert alert-success d-none"></div>
       <div id="error" class="alert alert-danger d-none"></div>
+      <!-- Profile Photo -->
+      <div class="text-center mb-4">
+        <img id="profile-img" src="https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff&size=100" class="rounded-circle mb-2" width="100" height="100" style="object-fit:cover"/>
+        <div><label class="btn btn-sm btn-outline-primary mt-1"><i class="fas fa-camera me-1"></i>Change Photo<input type="file" id="photo-input" accept="image/*" class="d-none"/></label></div>
+      </div>
       <form id="profile-form">
         <div class="mb-3"><label class="form-label fw-semibold">Full Name</label><input type="text" id="fullName" class="form-control"/></div>
         <div class="mb-3"><label class="form-label fw-semibold">Email</label><input type="email" id="email" class="form-control" disabled/></div>
@@ -43,6 +48,17 @@ document.addEventListener('DOMContentLoaded', async()=>{
   document.getElementById('phone').value=p.phone||'';
   document.getElementById('designation').value=p.designation||'';
   document.getElementById('department').value=p.department?.name||'';
+  if(p.profilePhoto) document.getElementById('profile-img').src=p.profilePhoto;
+  else if(p.fullName) document.getElementById('profile-img').src=`https://ui-avatars.com/api/?name=${encodeURIComponent(p.fullName)}&background=4f46e5&color=fff&size=100`;
+});
+document.getElementById('photo-input').addEventListener('change', async(e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const formData = new FormData(); formData.append('file', file);
+  try {
+    const res = await fetch('/api/users/me/photo',{method:'POST',headers:{'Authorization':`Bearer ${api.getToken()}`},body:formData});
+    const data = await res.json();
+    if(data.success){ document.getElementById('profile-img').src=data.message+'?t='+Date.now(); document.getElementById('success').textContent='Photo updated!'; document.getElementById('success').classList.remove('d-none'); }
+  } catch(err){ document.getElementById('error').textContent='Photo upload failed'; document.getElementById('error').classList.remove('d-none'); }
 });
 document.getElementById('profile-form').addEventListener('submit', async(e)=>{
   e.preventDefault();
