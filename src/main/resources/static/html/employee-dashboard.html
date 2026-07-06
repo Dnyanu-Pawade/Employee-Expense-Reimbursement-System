@@ -50,14 +50,23 @@
 <script src="../js/api.js"></script><script src="../js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-  const claims = await api.getMyExpenses();
-  document.getElementById('total-claims').textContent = claims.length;
-  document.getElementById('pending-claims').textContent = claims.filter(c=>['SUBMITTED','TEAM_LEAD_APPROVED','MANAGER_APPROVED','FINANCE_VERIFIED'].includes(c.status)).length;
-  document.getElementById('paid-claims').textContent = claims.filter(c=>c.status==='PAYMENT_PROCESSED').length;
-  document.getElementById('total-amount').textContent = formatCurrency(claims.reduce((s,c)=>s+parseFloat(c.amount||0),0));
   const tbody = document.getElementById('claims-body');
-  if (!claims.length) { tbody.innerHTML='<tr><td colspan="7" class="text-center py-3 text-muted">No claims yet. <a href="submit-expense.html">Submit one now</a></td></tr>'; return; }
-  tbody.innerHTML = claims.slice(0,10).map(c=>`<tr><td><small class="text-muted">${c.claimNumber}</small></td><td>${c.title}</td><td><span class="badge bg-secondary">${c.category}</span></td><td class="fw-semibold">₹${parseFloat(c.amount).toFixed(2)}</td><td>${formatDate(c.expenseDate)}</td><td>${statusBadge(c.status)}</td><td><button class="btn btn-outline-danger btn-sm" onclick="api.downloadPdf(${c.id},'${c.claimNumber}')"><i class="fas fa-file-pdf"></i></button></td></tr>`).join('');
+  try {
+    const data = await api.searchExpenses({page:0, size:10});
+    const claims = data.content || [];
+    const total = data.totalElements || 0;
+    // stats
+    const allData = await api.searchExpenses({page:0, size:1000});
+    const all = allData.content || [];
+    document.getElementById('total-claims').textContent = allData.totalElements || 0;
+    document.getElementById('pending-claims').textContent = all.filter(c=>['SUBMITTED','TEAM_LEAD_APPROVED','MANAGER_APPROVED','FINANCE_VERIFIED'].includes(c.status)).length;
+    document.getElementById('paid-claims').textContent = all.filter(c=>c.status==='PAYMENT_PROCESSED').length;
+    document.getElementById('total-amount').textContent = formatCurrency(all.reduce((s,c)=>s+parseFloat(c.amount||0),0));
+    if (!claims.length) { tbody.innerHTML='<tr><td colspan="7" class="text-center py-3 text-muted">No claims yet. <a href="submit-expense.html">Submit one now</a></td></tr>'; return; }
+    tbody.innerHTML = claims.map(c=>`<tr><td><small class="text-muted">${c.claimNumber}</small></td><td>${c.title}</td><td><span class="badge bg-secondary">${c.category}</span></td><td class="fw-semibold">₹${parseFloat(c.amount).toFixed(2)}</td><td>${formatDate(c.expenseDate)}</td><td>${statusBadge(c.status)}</td><td><button class="btn btn-outline-danger btn-sm" onclick="api.downloadPdf(${c.id},'${c.claimNumber}')"><i class="fas fa-file-pdf"></i></button></td></tr>`).join('');
+  } catch(e) {
+    tbody.innerHTML=`<tr><td colspan="7" class="text-center py-3 text-danger"><i class="fas fa-exclamation-circle me-1"></i>${e.message||'Failed to load claims'}</td></tr>`;
+  }
 });
 </script>
 </body>
