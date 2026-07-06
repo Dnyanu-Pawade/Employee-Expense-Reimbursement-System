@@ -28,9 +28,11 @@ A full-stack **Spring Boot + MySQL + HTML/CSS/JS** enterprise-grade expense reim
 
 > Login Page → Dashboard → Submit Expense → Approval Workflow → Analytics
 
-| Login | Employee Dashboard | Admin Dashboard |
-|-------|-------------------|----------------|
-| ![Login](docs/screenshots/login.png) | ![Employee](docs/screenshots/employee.png) | ![Admin](docs/screenshots/admin.png) |
+### Login Page
+![Login](docs/screenshots/loginPage.png)
+
+### Admin Dashboard
+![Admin](docs/screenshots/adminPage.png)
 
 ---
 
